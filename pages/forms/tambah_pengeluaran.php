@@ -1,36 +1,41 @@
-<!-- pages/forms/tambah_pengeluaran.php -->
 <?php
+include '../../config/koneksi.php';
 session_start();
-include '../config/koneksi.php';
-include '../components/header.php';
+$user_id = $_SESSION['user_id'];
+$kategori = mysqli_query($conn, "SELECT * FROM kategori WHERE jenis='pengeluaran'");
+
+if (isset($_POST['submit'])) {
+    $kategori_id = $_POST['kategori'];
+    $jumlah = $_POST['jumlah'];
+    $tanggal = $_POST['tanggal'];
+    $keterangan = $_POST['keterangan'];
+
+    mysqli_query($conn, "INSERT INTO pengeluaran (user_id, kategori_id, jumlah, tanggal, keterangan) 
+                         VALUES ('$user_id', '$kategori_id', '$jumlah', '$tanggal', '$keterangan')");
+    echo "<script>alert('Pengeluaran berhasil ditambahkan');window.location.href='../tables/pengeluaran.php';</script>";
+}
 ?>
-<div class="d-flex">
-  <?php include '../components/sidebar.php'; ?>
-  
-  <div class="p-4" style="width: 100%;">
+
+<style>
+    body { background: #fffaf0; font-family: sans-serif; }
+    form { background: white; padding: 20px; border: 2px solid #ffc0cb; border-radius: 8px; max-width: 450px; margin: auto; }
+    input, select, textarea, button {
+        width: 100%; padding: 10px; margin: 10px 0;
+        border-radius: 5px; border: 1px solid #ffd700;
+    }
+    button { background-color: #ff69b4; color: white; font-weight: bold; }
+</style>
+
+<form method="POST">
     <h2>Tambah Pengeluaran</h2>
-    <form action="../actions/proses_tambah_pengeluaran.php" method="POST">
-      <div class="mb-3">
-        <label for="tanggal" class="form-label">Tanggal</label>
-        <input type="date" name="tanggal" class="form-control" required>
-      </div>
-      <div class="mb-3">
-        <label for="kategori" class="form-label">Kategori</label>
-        <select name="kategori" class="form-control" required>
-          <option value="Makanan">Makanan</option>
-          <option value="Transportasi">Transportasi</option>
-          <!-- Tambahkan kategori lain -->
-        </select>
-      </div>
-      <div class="mb-3">
-        <label for="jumlah" class="form-label">Jumlah (Rp)</label>
-        <input type="number" name="jumlah" class="form-control" required>
-      </div>
-      <div class="mb-3">
-        <label for="deskripsi" class="form-label">Deskripsi</label>
-        <textarea name="deskripsi" class="form-control"></textarea>
-      </div>
-      <button type="submit" class="btn btn-success">Simpan</button>
-    </form>
-  </div>
-</div>
+    <select name="kategori" required>
+        <option value="">-- Pilih Kategori --</option>
+        <?php while ($row = mysqli_fetch_assoc($kategori)) { ?>
+            <option value="<?= $row['id'] ?>"><?= $row['nama_kategori'] ?></option>
+        <?php } ?>
+    </select>
+    <input type="number" name="jumlah" placeholder="Jumlah" required>
+    <input type="date" name="tanggal" required>
+    <textarea name="keterangan" placeholder="Keterangan (opsional)"></textarea>
+    <button type="submit" name="submit">Simpan</button>
+</form>

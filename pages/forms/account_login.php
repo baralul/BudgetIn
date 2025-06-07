@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../../config/koneksi.php'; // adjust path if needed
+require_once '../../config/koneksi.php';
 
 $error = '';
 
@@ -35,24 +35,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <title>Login - BudgetIn</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url('../../photo/bg.png');
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
+<body class="flex items-center justify-center min-h-screen bg-black/40 backdrop-blur-sm px-4">
 
-  <form method="POST" class="bg-white p-8 rounded shadow-md w-full max-w-sm">
-    <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+  <form method="POST" class="bg-white/90 p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6 backdrop-blur-md">
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-pink-500">Login to <span class="text-yellow-400">BudgetIn</span></h2>
+      <p class="text-gray-600 text-sm mt-2">Kelola keuanganmu dengan mudah</p>
+    </div>
 
     <?php if ($error): ?>
-      <p class="mb-4 text-red-600"><?= $error ?></p>
+      <div class="bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm"><?= $error ?></div>
     <?php endif; ?>
 
-    <label class="block mb-2 text-sm">Username</label>
-    <input type="text" name="username" required class="w-full px-3 py-2 border rounded mb-4">
+    <div>
+      <label class="block text-sm font-medium text-pink-600 mb-1">Username</label>
+      <input type="text" name="username" required class="w-full px-4 py-2 border border-pink-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400">
+    </div>
 
-    <label class="block mb-2 text-sm">Password</label>
-    <input type="password" name="password" required class="w-full px-3 py-2 border rounded mb-6">
+    <div>
+      <label class="block text-sm font-medium text-pink-600 mb-1">Password</label>
+      <input type="password" name="password" required class="w-full px-4 py-2 border border-pink-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400">
+    </div>
 
-    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
-    <p class="text-center text-sm mt-4">Belum punya akun? <a href="account_sign_up.php" class="text-blue-600 hover:underline">Sign Up</a></p>
+    <button type="submit" class="w-full py-3 bg-yellow-400 text-pink-800 font-semibold rounded-lg hover:bg-yellow-500 transition">Login</button>
+
+    <p class="text-center text-sm text-gray-600">
+      Belum punya akun? 
+      <a href="account_sign_up.php" class="text-pink-500 hover:underline font-medium">Sign Up</a>
+    </p>
   </form>
 
 </body>
