@@ -25,43 +25,54 @@ $nama = $_SESSION['nama_lengkap'] ?? 'Pengguna';
     <div class="flex-1 flex flex-col">
       <?php include '../../components/header.php'; ?>
 
-      <main class="p-6">
+      <main class="flex-1 p-6">
+
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-pink-700 mb-2">Profil Anda</h1>
           <p class="text-pink-600">Kelola informasi akun dan pengaturan Anda</p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md max-w-xl space-y-4">
-          <div>
-            <p class="text-lg font-semibold text-gray-800">Nama Lengkap:</p>
-            <p class="text-gray-600"><?= htmlspecialchars($nama) ?></p>
+
+        <div class="bg-white rounded-xl shadow-lg p-8 w-full min-h-[calc(100vh-10rem)] flex flex-col justify-between">
+
+          <div class="bg-gradient-to-r from-pink-500 to-pink-600 px-8 py-6 rounded-lg mb-8">
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-pink-500 text-2xl"></i>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-white">Selamat datang!</h2>
+                <p class="text-pink-100">Kelola profil Anda dengan mudah</p>
+              </div>
+            </div>
           </div>
 
-          <div class="p-8">
-            <div class="mb-8">
-              <div class="flex items-center mb-3">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+
+            <div>
+              <div class="flex items-center mb-4">
                 <i class="fas fa-user-circle text-pink-500 text-xl mr-3"></i>
                 <h3 class="text-lg font-semibold text-gray-800">Informasi Pengguna</h3>
               </div>
-              
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-2xl">
-              <div class="bg-gradient-to-r from-pink-500 to-pink-600 px-8 py-6">
-                <div class="flex items-center space-x-4">
-                  <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                    <i class="fas fa-user text-pink-500 text-2xl"></i>
-                  </div>
+              <div class="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-300">
+                <div class="flex justify-between items-center">
                   <div>
-                    <h2 class="text-2xl font-bold text-white">Selamat datang!</h2>
-                    <p class="text-pink-100">Kelola profil Anda dengan mudah</p>
+                    <p class="text-sm font-medium text-gray-600 mb-1">Nama Lengkap</p>
+                    <p class="text-lg font-semibold text-gray-800"><?= htmlspecialchars($nama) ?></p>
                   </div>
+                  <i class="fas fa-id-card text-pink-400 text-2xl"></i>
                 </div>
+              </div>
             </div>
+
 
             <div class="space-y-4">
               <div class="flex items-center mb-4">
                 <i class="fas fa-cogs text-pink-500 text-xl mr-3"></i>
                 <h3 class="text-lg font-semibold text-gray-800">Pengaturan Akun</h3>
               </div>
+
 
               <a href="../forms/account_change_password.php" 
                  class="group flex items-center justify-between w-full bg-gradient-to-r from-yellow-300 to-yellow-400 hover:from-yellow-400 hover:to-yellow-500 text-yellow-900 p-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-md hover:shadow-lg">
@@ -74,6 +85,7 @@ $nama = $_SESSION['nama_lengkap'] ?? 'Pengguna';
                 </div>
                 <i class="fas fa-chevron-right text-yellow-700 group-hover:translate-x-1 transition-transform"></i>
               </a>
+
 
               <a href="../../logout.php" 
                  class="group flex items-center justify-between w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white p-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-md hover:shadow-lg">
@@ -99,13 +111,12 @@ $nama = $_SESSION['nama_lengkap'] ?? 'Pengguna';
                 <i class="fas fa-chevron-right text-red-600 group-hover:translate-x-1 transition-transform"></i>
               </a>
             </div>
+          </div>
 
-            <div class="mt-8 pt-6 border-t border-gray-100">
-              <div class="flex items-center text-sm text-gray-500">
-                <i class="fas fa-info-circle mr-2"></i>
-                <p>Perubahan yang Anda buat akan tersimpan secara otomatis</p>
-              </div>
-            </div>
+
+          <div class="mt-10 pt-6 border-t border-gray-100 text-sm text-gray-500 flex items-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            <p>Perubahan yang Anda buat akan tersimpan secara otomatis</p>
           </div>
         </div>
       </main>
