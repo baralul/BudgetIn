@@ -30,6 +30,28 @@ $riwayat_q = mysqli_query($conn, "
     ORDER BY r.tanggal DESC, r.id DESC
     LIMIT 5
 ");
+
+// Ambil data bulanan untuk grafik
+$pengeluaran_bulanan = [];
+$pemasukan_bulanan = [];
+
+for ($i = 1; $i <= 12; $i++) {
+    $bulan = str_pad($i, 2, '0', STR_PAD_LEFT);
+
+    $q1 = mysqli_query($conn, "
+        SELECT SUM(jumlah) AS total 
+        FROM pengeluaran 
+        WHERE user_id = $user_id AND MONTH(tanggal) = $i
+    ");
+    $pengeluaran_bulanan[] = (int)(mysqli_fetch_assoc($q1)['total'] ?? 0);
+
+    $q2 = mysqli_query($conn, "
+        SELECT SUM(jumlah) AS total 
+        FROM pemasukan 
+        WHERE user_id = $user_id AND MONTH(tanggal) = $i
+    ");
+    $pemasukan_bulanan[] = (int)(mysqli_fetch_assoc($q2)['total'] ?? 0);
+}
 ?>
 
 <!DOCTYPE html>
@@ -109,7 +131,11 @@ $riwayat_q = mysqli_query($conn, "
   </div>
 
   <script>
-    // Ini placeholder, nanti bisa diganti dengan data real-time dari PHP ke JS
+    const pengeluaranData = <?= json_encode($pengeluaran_bulanan) ?>;
+    const pemasukanData = <?= json_encode($pemasukan_bulanan) ?>;
+    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
     const chartOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -120,10 +146,10 @@ $riwayat_q = mysqli_query($conn, "
     new Chart(document.getElementById('expenseChart').getContext('2d'), {
       type: 'bar',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        labels,
         datasets: [{
           label: 'Pengeluaran',
-          data: [0, 0, 0, 0, 0, 0],
+          data: pengeluaranData,
           backgroundColor: 'rgba(255, 99, 132, 0.6)',
           borderRadius: 6
         }]
@@ -134,10 +160,10 @@ $riwayat_q = mysqli_query($conn, "
     new Chart(document.getElementById('incomeChart').getContext('2d'), {
       type: 'line',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        labels,
         datasets: [{
           label: 'Pemasukan',
-          data: [0, 0, 0, 0, 0, 0],
+          data: pemasukanData,
           borderColor: 'rgba(255, 205, 86, 1)',
           backgroundColor: 'rgba(255, 205, 86, 0.2)',
           tension: 0.4,
