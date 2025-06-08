@@ -30,7 +30,6 @@ if (isset($_POST['update_profile'])) {
     if ($new_username === '') {
         $error = "Username tidak boleh kosong.";
     } else {
-        // Cek apakah username sudah dipakai oleh user lain
         $check = $conn->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
         $check->bind_param("si", $new_username, $user_id);
         $check->execute();
