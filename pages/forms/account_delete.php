@@ -1,14 +1,27 @@
 <?php
 include '../../config/koneksi.php';
 session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../index.php");
+    exit;
+}
+
 $user_id = $_SESSION['user_id'];
 
 if (isset($_POST['delete'])) {
-    mysqli_query($conn, "DELETE FROM users WHERE id=$user_id");
-    session_destroy();
-    echo "<script>alert('Akun berhasil dihapus');window.location.href='../../index.php';</script>";
+    $conn->query("DELETE FROM pemasukan WHERE user_id = $user_id");
+    $conn->query("DELETE FROM pengeluaran WHERE user_id = $user_id");
+    $conn->query("DELETE FROM riwayat WHERE user_id = $user_id");
+    if ($conn->query("DELETE FROM users WHERE id = $user_id")) {
+        session_destroy();
+        echo "<script>alert('Akun berhasil dihapus'); window.location.href='../../index.php';</script>";
+    } else {
+        echo "<script>alert('Gagal menghapus akun: {$conn->error}');</script>";
+    }
 }
 ?>
+
 
 <style>
     body { background: #fff0f5; font-family: sans-serif; }
