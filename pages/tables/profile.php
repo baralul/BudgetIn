@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$query = "SELECT nama_lengkap, username FROM users WHERE id = ?";
+$query = "SELECT username FROM users WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -16,7 +16,6 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 1) {
     $user = $result->fetch_assoc();
-    $nama_lengkap = $user['nama_lengkap'];
     $username = $user['username'];
 } else {
     header("Location: ../forms/account_login.php");
@@ -26,19 +25,30 @@ if ($result->num_rows === 1) {
 $success = '';
 $error = '';
 if (isset($_POST['update_profile'])) {
-    $new_nama = trim($_POST['nama_lengkap']);
-    if ($new_nama !== '') {
-        $update = $conn->prepare("UPDATE users SET nama_lengkap = ? WHERE id = ?");
-        $update->bind_param("si", $new_nama, $user_id);
-        if ($update->execute()) {
-            $nama_lengkap = $new_nama;
-            $_SESSION['nama_lengkap'] = $new_nama;
-            $success = "Profil berhasil diperbarui!";
-        } else {
-            $error = "Gagal memperbarui profil.";
-        }
+    $new_username = trim($_POST['username']);
+
+    if ($new_username === '') {
+        $error = "Username tidak boleh kosong.";
     } else {
-        $error = "Nama lengkap tidak boleh kosong.";
+        // Cek apakah username sudah dipakai oleh user lain
+        $check = $conn->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
+        $check->bind_param("si", $new_username, $user_id);
+        $check->execute();
+        $check_result = $check->get_result();
+
+        if ($check_result->num_rows > 0) {
+            $error = "Username sudah digunakan oleh pengguna lain.";
+        } else {
+            $update = $conn->prepare("UPDATE users SET username = ? WHERE id = ?");
+            $update->bind_param("si", $new_username, $user_id);
+            if ($update->execute()) {
+                $username = $new_username;
+                $_SESSION['username'] = $new_username;
+                $success = "Username berhasil diperbarui!";
+            } else {
+                $error = "Gagal memperbarui username.";
+            }
+        }
     }
 }
 ?>
@@ -60,7 +70,6 @@ if (isset($_POST['update_profile'])) {
       <?php include '../../components/header.php'; ?>
 
       <main class="flex-1 p-6">
-
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-pink-700 mb-2">Profil Anda</h1>
           <p class="text-pink-600">Kelola informasi akun dan pengaturan Anda</p>
@@ -74,7 +83,7 @@ if (isset($_POST['update_profile'])) {
                 <i class="fas fa-user text-pink-500 text-2xl"></i>
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-white">Selamat datang!</h2>
+                <h2 class="text-2xl font-bold text-white">Selamat datang, <?= htmlspecialchars($username ?? '') ?>!</h2>
                 <p class="text-pink-100">Kelola profil Anda dengan mudah</p>
               </div>
             </div>
@@ -89,16 +98,16 @@ if (isset($_POST['update_profile'])) {
               </div>
 
               <?php if ($error): ?>
-                <div class="mb-4 p-2 bg-red-100 text-red-700 rounded"><?= htmlspecialchars($error) ?></div>
+                <div class="mb-4 p-2 bg-red-100 text-red-700 rounded"><?= htmlspecialchars($error ?? '') ?></div>
               <?php elseif ($success): ?>
-                <div class="mb-4 p-2 bg-green-100 text-green-700 rounded"><?= htmlspecialchars($success) ?></div>
+                <div class="mb-4 p-2 bg-green-100 text-green-700 rounded"><?= htmlspecialchars($success ?? '') ?></div>
               <?php endif; ?>
 
               <div class="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-300">
                 <div class="flex justify-between items-center">
                   <div>
-                    <p class="text-sm font-medium text-gray-600 mb-1">Nama Lengkap</p>
-                    <p class="text-lg font-semibold text-gray-800"><?= htmlspecialchars($nama_lengkap) ?></p>
+                    <p class="text-sm font-medium text-gray-600 mb-1">Username</p>
+                    <p class="text-lg font-semibold text-gray-800"><?= htmlspecialchars($username ?? '') ?></p>
                   </div>
                   <i class="fas fa-id-card text-pink-400 text-2xl"></i>
                 </div>
@@ -107,23 +116,24 @@ if (isset($_POST['update_profile'])) {
                   onclick="document.getElementById('editForm').classList.toggle('hidden')"
                   class="mt-4 px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition"
                 >
-                  Edit Nama Lengkap
+                  Edit Username
                 </button>
 
                 <form id="editForm" method="POST" class="hidden mt-4">
                   <input
                     type="text"
-                    name="nama_lengkap"
-                    value="<?= htmlspecialchars($nama_lengkap) ?>"
+                    name="username"
+                    value="<?= htmlspecialchars($username ?? '') ?>"
                     required
-                    class="w-full px-3 py-2 border border-pink-300 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    class="w-full px-3 py-2 border border-pink-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    placeholder="Username"
                   />
                   <button
                     type="submit"
                     name="update_profile"
                     class="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700 transition"
                   >
-                    Simpan
+                    Simpan Perubahan
                   </button>
                 </form>
               </div>
