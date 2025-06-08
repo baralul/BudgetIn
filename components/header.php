@@ -3,7 +3,9 @@
     <button onclick="toggleSidebar()" class="text-2xl text-gray-700 hover:text-yellow-500">
       &#9776;
     </button>
-    <h1 class="text-xl font-bold text-gray-800">BudgetIn</h1>
+    <h1 class="text-xl font-extrabold mb-4">
+      <span class="text-yellow-400">Budget</span><span class="text-pink-400">In</span>
+    </h1>
   </div>
   <nav class="flex items-center gap-6">
     <a href="/BUDGETIN/index.php" class="text-gray-600 hover:text-yellow-600 transition">Dashboard</a>

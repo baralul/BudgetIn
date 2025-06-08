@@ -5,6 +5,7 @@ $success = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nama_lengkap = trim($_POST['nama_lengkap'] ?? '');
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm = $_POST['confirm'] ?? '';
@@ -13,9 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Konfirmasi password tidak cocok.";
     } else {
         $hashed = password_hash($password, PASSWORD_BCRYPT);
-        $query = "INSERT INTO users (username, password) VALUES (?, ?)";
+        $query = "INSERT INTO users (nama_lengkap, username, password) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ss", $username, $hashed);
+        $stmt->bind_param("sss", $nama_lengkap, $username, $hashed);
 
         if ($stmt->execute()) {
             $success = "Akun berhasil dibuat. Silakan login.";
@@ -25,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -53,6 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php elseif ($success): ?>
       <div class="bg-green-100 text-green-700 px-4 py-2 rounded text-sm"><?= $success ?></div>
     <?php endif; ?>
+
+    <div>
+      <label class="block text-sm font-medium text-pink-600 mb-1">Nama Lengkap</label>
+      <input type="text" name="nama_lengkap" required class="w-full px-4 py-2 border border-pink-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
+    </div>
 
     <div>
       <label class="block text-sm font-medium text-pink-600 mb-1">Username</label>
