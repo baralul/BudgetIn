@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$query = "SELECT username FROM users WHERE id = ?";
+$query = "SELECT nama_lengkap, username FROM users WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -17,6 +17,7 @@ $result = $stmt->get_result();
 if ($result->num_rows === 1) {
     $user = $result->fetch_assoc();
     $username = $user['username'];
+    $nama_lengkap = $user['nama_lengkap'];
 } else {
     header("Location: ../forms/account_login.php");
     exit;
@@ -26,9 +27,10 @@ $success = '';
 $error = '';
 if (isset($_POST['update_profile'])) {
     $new_username = trim($_POST['username']);
+    $new_nama = trim($_POST['nama_lengkap']);
 
-    if ($new_username === '') {
-        $error = "Username tidak boleh kosong.";
+    if ($new_username === '' || $new_nama === '') {
+        $error = "Nama lengkap dan username tidak boleh kosong.";
     } else {
         $check = $conn->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
         $check->bind_param("si", $new_username, $user_id);
@@ -38,14 +40,16 @@ if (isset($_POST['update_profile'])) {
         if ($check_result->num_rows > 0) {
             $error = "Username sudah digunakan oleh pengguna lain.";
         } else {
-            $update = $conn->prepare("UPDATE users SET username = ? WHERE id = ?");
-            $update->bind_param("si", $new_username, $user_id);
+            $update = $conn->prepare("UPDATE users SET username = ?, nama_lengkap = ? WHERE id = ?");
+            $update->bind_param("ssi", $new_username, $new_nama, $user_id);
             if ($update->execute()) {
                 $username = $new_username;
+                $nama_lengkap = $new_nama;
                 $_SESSION['username'] = $new_username;
-                $success = "Username berhasil diperbarui!";
+                $_SESSION['nama_lengkap'] = $new_nama;
+                $success = "Profil berhasil diperbarui!";
             } else {
-                $error = "Gagal memperbarui username.";
+                $error = "Gagal memperbarui profil.";
             }
         }
     }
@@ -82,7 +86,7 @@ if (isset($_POST['update_profile'])) {
                 <i class="fas fa-user text-pink-500 text-2xl"></i>
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-white">Selamat datang, <?= htmlspecialchars($username ?? '') ?>!</h2>
+                <h2 class="text-2xl font-bold text-white">Selamat datang, <?= htmlspecialchars($nama_lengkap ?? '') ?>!</h2>
                 <p class="text-pink-100">Kelola profil Anda dengan mudah</p>
               </div>
             </div>
@@ -103,6 +107,11 @@ if (isset($_POST['update_profile'])) {
               <?php endif; ?>
 
               <div class="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-300">
+                <div class="mb-4">
+                  <p class="text-sm font-medium text-gray-600 mb-1">Nama Lengkap</p>
+                  <p class="text-lg font-semibold text-gray-800"><?= htmlspecialchars($nama_lengkap ?? '') ?></p>
+                </div>
+
                 <div class="flex justify-between items-center">
                   <div>
                     <p class="text-sm font-medium text-gray-600 mb-1">Username</p>
@@ -115,10 +124,21 @@ if (isset($_POST['update_profile'])) {
                   onclick="document.getElementById('editForm').classList.toggle('hidden')"
                   class="mt-4 px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition"
                 >
-                  Edit Username
+                  Edit Profil
                 </button>
 
                 <form id="editForm" method="POST" class="hidden mt-4">
+                  <label class="block mb-2 text-sm font-medium text-gray-700">Nama Lengkap</label>
+                  <input
+                    type="text"
+                    name="nama_lengkap"
+                    value="<?= htmlspecialchars($nama_lengkap ?? '') ?>"
+                    required
+                    class="w-full px-3 py-2 border border-pink-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    placeholder="Nama Lengkap"
+                  />
+
+                  <label class="block mb-2 text-sm font-medium text-gray-700">Username</label>
                   <input
                     type="text"
                     name="username"
@@ -127,6 +147,7 @@ if (isset($_POST['update_profile'])) {
                     class="w-full px-3 py-2 border border-pink-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400"
                     placeholder="Username"
                   />
+
                   <button
                     type="submit"
                     name="update_profile"
