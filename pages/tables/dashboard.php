@@ -45,58 +45,71 @@ for ($i = 1; $i <= 12; $i++) {
           <p class="text-sm font-bold text-gray-500 mt-1">Dashboard</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-          <div class="bg-white rounded-2xl shadow p-8 col-span-1 text-center">
-            <h2 class="text-xl font-semibold text-yellow-600 mb-3">Kalender Bulan Ini</h2>
-            <p id="calendar-title" class="text-base font-medium text-gray-600 mb-4"></p>
+        <!-- Kalender dan Motivasi -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Kalender -->
+          <div class="bg-white rounded-2xl shadow p-6 text-center w-full max-w-3xl mx-auto">
+            <h2 class="text-2xl font-bold text-yellow-600 mb-4">Kalender Bulan Ini</h2>
+            <p id="calendar-title" class="text-lg font-medium text-gray-600 mb-4"></p>
             <div id="calendar" class="grid grid-cols-7 gap-2 text-center text-sm font-semibold text-gray-700">
               <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
             </div>
-            <div id="dates" class="grid grid-cols-7 gap-2 text-center mt-3 text-base"></div>
+            <div id="dates" class="grid grid-cols-7 gap-2 text-center mt-3 text-sm"></div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 col-span-3">
-            <div onclick="showModal('kategori')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
-              <div class="flex justify-center items-center text-indigo-600 text-3xl">
-                <i class="fas fa-tags"></i>
-              </div>
-              <h2 class="text-xl font-semibold text-yellow-600">Kategori</h2>
-              <p class="text-3xl font-bold"><?= $jumlah_kategori ?></p>
-              <p class="text-sm text-gray-500">Total kategori yang tersedia</p>
-            </div>
+          <!-- Motivasi -->
+          <div class="flex flex-col justify-center items-center bg-yellow-100 rounded-2xl shadow p-6 text-center w-full">
+            <div class="text-5xl mb-4">💰📈</div>
+            <h3 class="text-xl font-bold text-yellow-700 mb-2">Tips Keuangan Hari Ini</h3>
+            <p class="text-gray-700 text-sm max-w-md">
+              “Jangan menabung sisa dari pengeluaranmu. Tapi belanjakan sisa dari tabunganmu.” — Warren Buffet
+            </p>
+          </div>
+        </div>
 
-            <div onclick="showModal('riwayat')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
-              <div class="flex justify-center items-center text-blue-600 text-3xl">
-                <i class="fas fa-history"></i>
-              </div>
-              <h2 class="text-xl font-semibold text-yellow-600">Riwayat</h2>
-              <p class="text-3xl font-bold"><?= $jumlah_riwayat ?></p>
-              <p class="text-sm text-gray-500">Total transaksi yang telah dicatat</p>
+        <!-- Card -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+          <div onclick="showModal('kategori')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
+            <div class="flex justify-center items-center text-indigo-600 text-3xl">
+              <i class="fas fa-tags"></i>
             </div>
+            <h2 class="text-xl font-semibold text-yellow-600">Kategori</h2>
+            <p class="text-3xl font-bold"><?= $jumlah_kategori ?></p>
+            <p class="text-sm text-gray-500">Total kategori yang tersedia</p>
+          </div>
 
-            <div onclick="showModal('pemasukan')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
-              <div class="flex justify-center items-center text-green-500 text-3xl">
-                <i class="fas fa-arrow-up"></i>
-              </div>
-              <h2 class="text-xl font-semibold text-green-600">Pemasukan</h2>
-              <p class="text-2xl font-bold text-green-600">Rp <?= number_format($total_pemasukan, 0, ',', '.') ?></p>
-              <p class="text-sm text-gray-500">Total pemasukan sejauh ini</p>
+          <div onclick="showModal('riwayat')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
+            <div class="flex justify-center items-center text-blue-600 text-3xl">
+              <i class="fas fa-history"></i>
             </div>
+            <h2 class="text-xl font-semibold text-yellow-600">Riwayat</h2>
+            <p class="text-3xl font-bold"><?= $jumlah_riwayat ?></p>
+            <p class="text-sm text-gray-500">Total transaksi yang telah dicatat</p>
+          </div>
 
-            <div onclick="showModal('pengeluaran')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
-              <div class="flex justify-center items-center text-red-500 text-3xl">
-                <i class="fas fa-arrow-down"></i>
-              </div>
-              <h2 class="text-xl font-semibold text-red-500">Pengeluaran</h2>
-              <p class="text-2xl font-bold text-red-500">Rp <?= number_format($total_pengeluaran, 0, ',', '.') ?></p>
-              <p class="text-sm text-gray-500">Total pengeluaran sejauh ini</p>
+          <div onclick="showModal('pemasukan')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
+            <div class="flex justify-center items-center text-green-500 text-3xl">
+              <i class="fas fa-arrow-up"></i>
             </div>
+            <h2 class="text-xl font-semibold text-green-600">Pemasukan</h2>
+            <p class="text-2xl font-bold text-green-600">Rp <?= number_format($total_pemasukan, 0, ',', '.') ?></p>
+            <p class="text-sm text-gray-500">Total pemasukan sejauh ini</p>
+          </div>
+
+          <div onclick="showModal('pengeluaran')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
+            <div class="flex justify-center items-center text-red-500 text-3xl">
+              <i class="fas fa-arrow-down"></i>
+            </div>
+            <h2 class="text-xl font-semibold text-red-500">Pengeluaran</h2>
+            <p class="text-2xl font-bold text-red-500">Rp <?= number_format($total_pengeluaran, 0, ',', '.') ?></p>
+            <p class="text-sm text-gray-500">Total pengeluaran sejauh ini</p>
           </div>
         </div>
       </main>
     </div>
   </div>
 
+  <!-- Modal -->
   <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white rounded-2xl shadow-lg p-8 w-11/12 max-w-2xl">
       <h2 id="modal-title" class="text-2xl font-bold text-yellow-600 mb-4 text-center"></h2>
