@@ -86,6 +86,15 @@ for ($i = 1; $i <= 12; $i++) {
           </div>
         </div>
 
+        <!-- Chart Gabungan -->
+        <div class="bg-white rounded-xl shadow p-6">
+          <h2 class="text-lg font-semibold text-yellow-600 mb-4">Grafik Pemasukan vs Pengeluaran Bulanan</h2>
+          <div class="h-96">
+            <canvas id="combinedChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart Individual (Opsional) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-white rounded-xl shadow p-6 h-[300px]">
             <h2 class="text-lg font-semibold text-yellow-600 mb-4">Grafik Pengeluaran Bulanan</h2>
@@ -140,9 +149,96 @@ for ($i = 1; $i <= 12; $i++) {
       responsive: true,
       maintainAspectRatio: false,
       animation: false,
-      scales: { y: { beginAtZero: true } }
+      scales: { 
+        y: { 
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return 'Rp ' + value.toLocaleString('id-ID');
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString('id-ID');
+            }
+          }
+        }
+      }
     };
 
+    // Chart Gabungan
+    new Chart(document.getElementById('combinedChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            type: 'bar',
+            label: 'Pemasukan',
+            data: pemasukanData,
+            backgroundColor: 'rgba(34, 197, 94, 0.7)',
+            borderColor: 'rgba(34, 197, 94, 1)',
+            borderWidth: 1,
+            borderRadius: 6,
+            order: 2
+          },
+          {
+            type: 'bar',
+            label: 'Pengeluaran',
+            data: pengeluaranData,
+            backgroundColor: 'rgba(239, 68, 68, 0.7)',
+            borderColor: 'rgba(239, 68, 68, 1)',
+            borderWidth: 1,
+            borderRadius: 6,
+            order: 3
+          },
+          {
+            type: 'line',
+            label: 'Selisih (Pemasukan - Pengeluaran)',
+            data: pemasukanData.map((income, index) => income - pengeluaranData[index]),
+            borderColor: 'rgba(234, 179, 8, 1)',
+            backgroundColor: 'rgba(234, 179, 8, 0.1)',
+            borderWidth: 3,
+            fill: false,
+            tension: 0.4,
+            pointBackgroundColor: 'rgba(234, 179, 8, 1)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 6,
+            order: 1
+          }
+        ]
+      },
+      options: {
+        ...chartOptions,
+        scales: {
+          ...chartOptions.scales,
+          y: {
+            ...chartOptions.scales.y,
+            title: {
+              display: true,
+              text: 'Jumlah (Rupiah)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Bulan'
+            }
+          }
+        }
+      }
+    });
+
+    // Chart Individual (tetap ada untuk perbandingan)
     new Chart(document.getElementById('expenseChart').getContext('2d'), {
       type: 'bar',
       data: {
