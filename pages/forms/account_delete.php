@@ -10,14 +10,35 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 if (isset($_POST['delete'])) {
-    $conn->query("DELETE FROM pemasukan WHERE user_id = $user_id");
-    $conn->query("DELETE FROM pengeluaran WHERE user_id = $user_id");
-    $conn->query("DELETE FROM riwayat WHERE user_id = $user_id");
-    if ($conn->query("DELETE FROM users WHERE id = $user_id")) {
-        session_destroy();
-        echo "<script>alert('Akun berhasil dihapus'); window.location.href='../../index.php';</script>";
+    // Prepared statement untuk keamanan
+    $stmt1 = $conn->prepare("DELETE FROM pemasukan WHERE user_id = ?");
+    $stmt2 = $conn->prepare("DELETE FROM pengeluaran WHERE user_id = ?");
+    $stmt3 = $conn->prepare("DELETE FROM riwayat WHERE user_id = ?");
+    $stmt4 = $conn->prepare("DELETE FROM users WHERE id = ?");
+
+    if ($stmt1 && $stmt2 && $stmt3 && $stmt4) {
+        $stmt1->bind_param('i', $user_id);
+        $stmt2->bind_param('i', $user_id);
+        $stmt3->bind_param('i', $user_id);
+        $stmt4->bind_param('i', $user_id);
+
+        $success = $stmt1->execute() && $stmt2->execute() && $stmt3->execute() && $stmt4->execute();
+
+        $stmt1->close();
+        $stmt2->close();
+        $stmt3->close();
+        $stmt4->close();
+
+        if ($success) {
+            session_unset();
+            session_destroy();
+            echo "<script>alert('Akun berhasil dihapus'); window.location.href='../../index.php';</script>";
+            exit;
+        } else {
+            echo "<script>alert('Gagal menghapus akun.');</script>";
+        }
     } else {
-        echo "<script>alert('Gagal menghapus akun: {$conn->error}');</script>";
+        echo "<script>alert('Gagal menyiapkan query.');</script>";
     }
 }
 ?>
