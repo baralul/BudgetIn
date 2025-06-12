@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            header("Location: ../tables/riwayat.php");
+            header("Location: ../tables/dashboard.php");
             exit;
         } else {
             $error = "Password salah.";
