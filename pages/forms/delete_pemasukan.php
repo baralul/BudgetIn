@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $id = $_GET['id'] ?? 0;
 
-// Validasi bahwa data yang akan dihapus milik user yang sedang login
 $stmt = $conn->prepare("SELECT id FROM pemasukan WHERE id = ? AND user_id = ?");
 $stmt->bind_param("ii", $id, $user_id);
 $stmt->execute();
@@ -21,7 +20,6 @@ if ($result->num_rows === 0) {
     exit;
 }
 
-// Hapus data
 $delete_stmt = $conn->prepare("DELETE FROM pemasukan WHERE id = ? AND user_id = ?");
 $delete_stmt->bind_param("ii", $id, $user_id);
 
