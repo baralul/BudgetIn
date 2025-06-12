@@ -34,7 +34,6 @@ if (isset($_SESSION['user_id'])) {
         Track your spending, plan better, and stay on budget — all in one place.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-        <a href="pages/tables/riwayat.php" class="px-6 py-3 bg-yellow-400 text-black rounded-xl hover:bg-yellow-500 transition font-semibold">View History</a>
         <a href="pages/forms/account_login.php" class="px-6 py-3 bg-pink-500 text-white rounded-xl hover:bg-pink-600 transition font-semibold border border-pink-600">Login</a>
         <a href="pages/forms/account_sign_up.php" class="px-6 py-3 bg-white/70 text-pink-600 rounded-xl hover:bg-white transition font-semibold border border-pink-600">Sign Up</a>
       </div>
