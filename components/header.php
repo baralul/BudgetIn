@@ -8,7 +8,7 @@
     </h1>
   </div>
   <nav class="flex items-center gap-6">
-    <a href="/BUDGETIN/index.php" class="text-gray-600 hover:text-yellow-600 transition">Dashboard</a>
+    <a href="../tables/dashboard.php" class="text-gray-600 hover:text-yellow-600 transition">Dashboard</a>
     <a href="profile.php" class="text-gray-600 hover:text-yellow-600 transition">Profile</a>
     <a href="../../logout.php" class="text-red-500 hover:text-red-600 font-medium transition">Logout</a>
   </nav>
