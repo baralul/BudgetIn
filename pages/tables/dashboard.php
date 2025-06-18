@@ -14,6 +14,8 @@ $jumlah_kategori = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS to
 $jumlah_riwayat = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM riwayat_transaksi WHERE user_id = $user_id"))['total'] ?? 0;
 $total_pemasukan = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(jumlah) AS total FROM pemasukan WHERE user_id = $user_id"))['total'] ?? 0;
 $total_pengeluaran = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(jumlah) AS total FROM pengeluaran WHERE user_id = $user_id"))['total'] ?? 0;
+$total_tabungan = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(jumlah_terkumpul) AS total FROM target_tabungan WHERE user_id = $user_id AND status = 'aktif'"))['total'] ?? 0;
+$total_anggaran = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(jumlah_anggaran) AS total FROM anggaran_bulanan WHERE user_id = $user_id AND bulan = MONTH(CURDATE()) AND tahun = YEAR(CURDATE())"))['total'] ?? 0;
 
 $pemasukan_bulanan = [];
 $pengeluaran_bulanan = [];
@@ -45,7 +47,6 @@ for ($i = 1; $i <= 12; $i++) {
           <p class="text-sm font-bold text-gray-500 mt-1">Dashboard</p>
         </div>
 
-        <!-- Kalender dan Motivasi -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Kalender -->
           <div class="bg-white rounded-2xl shadow p-6 text-center w-full max-w-3xl mx-auto">
@@ -57,7 +58,6 @@ for ($i = 1; $i <= 12; $i++) {
             <div id="dates" class="grid grid-cols-7 gap-2 text-center mt-3 text-sm"></div>
           </div>
 
-          <!-- Motivasi -->
           <div class="flex flex-col justify-center items-center bg-yellow-100 rounded-2xl shadow p-6 text-center w-full">
             <div class="text-5xl mb-4">💰📈</div>
             <h3 class="text-xl font-bold text-yellow-700 mb-2">Tips Keuangan Hari Ini</h3>
@@ -67,14 +67,13 @@ for ($i = 1; $i <= 12; $i++) {
           </div>
         </div>
 
-        <!-- Card -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           <div onclick="showModal('kategori')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
-            <div class="flex justify-center items-center text-indigo-600 text-3xl">
+            <div class="flex justify-center items-center text-pink-600 text-3xl">
               <i class="fas fa-tags"></i>
             </div>
-            <h2 class="text-xl font-semibold text-yellow-600">Kategori</h2>
-            <p class="text-3xl font-bold"><?= $jumlah_kategori ?></p>
+            <h2 class="text-xl font-semibold text-pink-600">Kategori</h2>
+            <p class="text-3xl font-bold text-pink-600"><?= $jumlah_kategori ?></p>
             <p class="text-sm text-gray-500">Total kategori yang tersedia</p>
           </div>
 
@@ -82,8 +81,8 @@ for ($i = 1; $i <= 12; $i++) {
             <div class="flex justify-center items-center text-blue-600 text-3xl">
               <i class="fas fa-history"></i>
             </div>
-            <h2 class="text-xl font-semibold text-yellow-600">Riwayat</h2>
-            <p class="text-3xl font-bold"><?= $jumlah_riwayat ?></p>
+            <h2 class="text-xl font-semibold text-blue-600">Riwayat</h2>
+            <p class="text-3xl font-bold text-blue-600"><?= $jumlah_riwayat ?></p>
             <p class="text-sm text-gray-500">Total transaksi yang telah dicatat</p>
           </div>
 
@@ -104,23 +103,40 @@ for ($i = 1; $i <= 12; $i++) {
             <p class="text-2xl font-bold text-red-500">Rp <?= number_format($total_pengeluaran, 0, ',', '.') ?></p>
             <p class="text-sm text-gray-500">Total pengeluaran sejauh ini</p>
           </div>
+
+          <div onclick="showModal('tabungan')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
+            <div class="flex justify-center items-center text-purple-600 text-3xl">
+              <i class="fas fa-piggy-bank"></i>
+            </div>
+            <h2 class="text-xl font-semibold text-purple-600">Target Tabungan</h2>
+            <p class="text-2xl font-bold text-purple-600">Rp <?= number_format($total_tabungan, 0, ',', '.') ?></p>
+            <p class="text-sm text-gray-500">Jumlah tabungan aktif saat ini</p>
+          </div>
+
+          <div onclick="showModal('anggaran')" class="cursor-pointer bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition text-center space-y-2">
+            <div class="flex justify-center items-center text-orange-500 text-3xl">
+              <i class="fas fa-chart-pie w-6"></i>
+            </div>
+            <h2 class="text-xl font-semibold text-orange-500">Anggaran Bulanan</h2>
+            <p class="text-2xl font-bold text-orange-500">Rp <?= number_format($total_anggaran, 0, ',', '.') ?></p>
+            <p class="text-sm text-gray-500">Total anggaran bulan ini</p>
+          </div>
         </div>
       </main>
     </div>
   </div>
 
-  <!-- Modal -->
-  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-2xl shadow-lg p-8 w-11/12 max-w-2xl">
-      <h2 id="modal-title" class="text-2xl font-bold text-yellow-600 mb-4 text-center"></h2>
-      <div id="modal-content" class="text-gray-700 text-base"></div>
-      <div class="text-center mt-6">
-        <button onclick="closeModal()" class="px-5 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-          Tutup
-        </button>
-      </div>
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 transition-opacity duration-300 ease-out">
+  <div class="bg-white rounded-2xl shadow-lg p-8 w-11/12 max-w-2xl transition-all duration-300 ease-out">
+    <h2 id="modal-title" class="text-2xl font-bold text-yellow-600 mb-4 text-center"></h2>
+    <div id="modal-content" class="text-gray-700 text-base"></div>
+    <div class="text-center mt-6">
+      <button onclick="closeModal()" class="px-5 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+        Tutup
+      </button>
     </div>
   </div>
+</div>
 
 <script>
 function showModal(type) {
@@ -138,10 +154,16 @@ function showModal(type) {
       type: 'bar',
       data: {
         labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
-        datasets: [{ label: 'Pemasukan Bulanan', data: <?= json_encode($pemasukan_bulanan) ?>, backgroundColor: 'rgba(0,200,0,0.5)', borderRadius: 5 }]
+        datasets: [{
+          label: 'Pemasukan Bulanan',
+          data: <?= json_encode($pemasukan_bulanan) ?>,
+          backgroundColor: 'rgba(0,200,0,0.5)',
+          borderRadius: 5
+        }]
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
+
   } else if (type === 'pengeluaran') {
     title.innerText = "Detail Pengeluaran Bulanan";
     content.innerHTML = '<canvas id="modalChart" height="200"></canvas>';
@@ -150,18 +172,52 @@ function showModal(type) {
       type: 'bar',
       data: {
         labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
-        datasets: [{ label: 'Pengeluaran Bulanan', data: <?= json_encode($pengeluaran_bulanan) ?>, backgroundColor: 'rgba(255,0,0,0.5)', borderRadius: 5 }]
+        datasets: [{
+          label: 'Pengeluaran Bulanan',
+          data: <?= json_encode($pengeluaran_bulanan) ?>,
+          backgroundColor: 'rgba(255,0,0,0.5)',
+          borderRadius: 5
+        }]
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
+
   } else if (type === 'kategori') {
     title.innerText = "Kategori";
-    content.innerHTML = `<p class="text-gray-700 leading-relaxed text-base">Halaman Kategori digunakan untuk mengelola jenis-jenis pengeluaran dan pemasukan. Pengguna dapat menambah, mengedit, dan menghapus kategori.</p>`;
+    content.innerHTML = `
+      <p class="text-gray-700 leading-relaxed text-base">
+        Halaman Kategori digunakan untuk mengelola jenis-jenis pengeluaran dan pemasukan.
+        Pengguna dapat menambah, mengedit, dan menghapus kategori.
+      </p>`;
+
   } else if (type === 'riwayat') {
     title.innerText = "Riwayat";
-    content.innerHTML = `<p class="text-gray-700 leading-relaxed text-base">Halaman Riwayat digunakan untuk menampilkan ringkasan aktivitas keuangan pengguna, termasuk total pemasukan, pengeluaran, dan saldo akhir.<br><br>Selain itu, halaman ini menampilkan grafik pemasukan dan pengeluaran bulanan serta 5 transaksi terakhir untuk memudahkan pemantauan keuangan.</p>`;
+    content.innerHTML = `
+      <p class="text-gray-700 leading-relaxed text-base">
+        Halaman Riwayat digunakan untuk menampilkan ringkasan aktivitas keuangan pengguna,
+        termasuk total pemasukan, pengeluaran, dan saldo akhir.<br><br>
+        Selain itu, halaman ini menampilkan grafik pemasukan dan pengeluaran bulanan
+        serta 5 transaksi terakhir untuk memudahkan pemantauan keuangan.
+      </p>`;
+
+  } else if (type === 'tabungan') {
+    title.innerText = "Target Tabungan";
+    content.innerHTML = `
+      <p class="text-gray-700 leading-relaxed text-base">
+        Halaman Target Tabungan menampilkan daftar tabungan aktif yang sedang dikumpulkan.
+        Kamu bisa melihat progres pencapaian terhadap target, menambahkan tabungan baru, atau menyelesaikannya.
+      </p>`;
+  } else {
+    title.innerText = "Anggaran Bulanan";
+    content.innerHTML = `<p class="text-gray-700">Halaman ini menyediakan informasi tentang anggaran setiap bulan.</p>`;
   }
 }
+
+function closeModal() {
+  const modal = document.getElementById('modal');
+  modal.classList.add('hidden');
+}
+
 
 function closeModal() {
   document.getElementById('modal').classList.add('hidden');
