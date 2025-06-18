@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen">
-    
     <!-- Hanya Sidebar -->
     <aside id="sidebar" class="w-64 bg-white h-screen p-4 space-y-2">
         <nav class="flex flex-col space-y-2">
