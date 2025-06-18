@@ -13,7 +13,6 @@ if (isset($_POST['delete'])) {
     $queries = [
         "DELETE FROM pemasukan WHERE user_id = ?",
         "DELETE FROM pengeluaran WHERE user_id = ?",
-        "DELETE FROM riwayat WHERE user_id = ?",
         "DELETE FROM users WHERE id = ?"
     ];
 
