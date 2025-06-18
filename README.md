@@ -32,7 +32,7 @@ Sebagai pelengkap, BudgetIn juga menyediakan fitur tambahan berupa Target Tabung
 - PHP (Native)
 - MySQL
 - HTML + CSS
-- TailwindCSS (jika digunakan)
+- TailwindCSS 
 - JavaScript
   
 
